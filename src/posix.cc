@@ -183,7 +183,12 @@ static Handle<Value> node_setrlimit(const Arguments& args) {
     bool get_soft = false, get_hard = false;
     if (limit_in->Has(soft_key)) {
         if(limit_in->Get(soft_key)->IsNull()) {
-            limit.rlim_cur = RLIM_INFINITY;
+            if(RLIMIT_NOFILE == resource) {
+                limit.rlim_cur = OPEN_MAX;
+            }
+            else {
+                limit.rlim_cur = RLIM_INFINITY;
+            }
         }
         else {
             limit.rlim_cur = limit_in->Get(soft_key)->IntegerValue();
